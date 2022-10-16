@@ -1,0 +1,89 @@
+void DiskSchedulingPolicy::FCFS()
+{
+    vector<int> orderOfProcessing(queueLength);
+    int totalHeadMovement = 0;
+    int currentHead = globalCurrentHead;
+    cout << endl;
+    cout << "\t\t+--------------------------------------+" << endl;
+    cout << "\t\t|Output for FCFS Disk Scheduling Policy|" << endl;
+    cout << "\t\t+--------------------------------------+" << endl;
+    cout << "\n\tHead currently at: " << currentHead << endl;
+    cout << "\n     Iteration \t Current Head \t Disk Movement \t Total Disk Movement" << endl;
+    cout << "------------------------------------------------------------------------" << endl;
+
+    for (int i = 0; i < queueLength; ++i)
+    {
+        int currentDiskMovement = abs(currentHead - requestQueue[i]);
+        totalHeadMovement += currentDiskMovement;
+        orderOfProcessing[i] = requestQueue[i];
+        currentHead = requestQueue[i];
+
+        cout << "\t" << (i + 1) << "\t\t" << currentHead << "\t\t" << currentDiskMovement << "\t\t" << totalHeadMovement << endl;
+    }
+    cout << "------------------------------------------------------------------------" << endl;
+
+    cout << "\n\tTotal Head Movement: " << totalHeadMovement << endl;
+    cout << "\n\tOrder of Processing: " << (orderOfProcessing[0])<< " ";
+    for (int i = 1; i < queueLength; ++i)
+    {
+        cout << " -> " << orderOfProcessing[i] << " ";
+    }
+    printAverageSeekTime(totalHeadMovement, queueLength);
+    cout << endl;
+}
+
+void DiskSchedulingPolicy::SSTF()
+{
+    // cout << queueLength << endl; ///////////////////////////////////
+    vector<int> orderOfProcessing(queueLength);
+    int totalHeadMovement = 0;
+    int currentHead = globalCurrentHead;
+
+    cout << endl;
+    cout << "\t\t+--------------------------------------+" << endl;
+    cout << "\t\t|Output for SSTF Disk Scheduling Policy|" << endl;
+    cout << "\t\t+--------------------------------------+" << endl;
+    cout << "\n\tHead currently at: " << currentHead << endl;
+
+    cout << "\n     Iteration \t Current Head \t Disk Movement \t Total Disk Movement" << endl;
+    cout << "------------------------------------------------------------------------" << endl;
+
+    vector<bool> traversed(queueLength);
+    for (int i = 0; i < queueLength; ++i)
+    {
+
+        int minimumDifference = 1000000, index = -1;
+
+        for (int j = 0; j < queueLength; ++j)
+        {
+
+            if (currentHead != requestQueue[j] && !traversed[j])
+            {
+                int currentDifference = abs(currentHead - requestQueue[j]);
+
+                if (currentDifference < minimumDifference)
+                {
+                    minimumDifference = currentDifference;
+                    index = j;
+                }
+            }
+        }
+
+        totalHeadMovement += minimumDifference;
+        orderOfProcessing[i] = requestQueue[index];
+        currentHead = requestQueue[index];
+        traversed[index] = true;
+
+        cout << "\t" << (i + 1) << "\t\t" << currentHead << "\t\t" << minimumDifference << "\t\t" << totalHeadMovement << endl;
+    }
+    cout << "------------------------------------------------------------------------" << endl;
+
+    cout << "\n\tTotal Head Movement: " << totalHeadMovement << endl;
+    cout << "\n\tOrder of Processing: " << (orderOfProcessing[0]) << " " ;
+    for (int i = 1; i < queueLength; ++i)
+    {
+        cout << " -> " << orderOfProcessing[i] <<" ";
+    }
+    printAverageSeekTime(totalHeadMovement, queueLength);
+    cout << endl;
+}
